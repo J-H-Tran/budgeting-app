@@ -1,23 +1,26 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Operating system generated
+.DS_Store
+Thumbs.db
 
-# dependencies
-budgeting-app-frontend/node_modules
-budgeting-app-frontend/.pnp
-budgeting-app-frontend/.pnp.js
+# IDE files
+.idea
+*.iml
+*.suo
+*.cache
+*.localhistory
 
-# testing
-budgeting-app-frontend/coverage
+# Build artifacts
+build/
+dist/
 
-# production
-budgeting-app-frontend/build
+# Dependency management
+node_modules/
+yarn-lock
+package-lock.json
 
-# misc
-budgeting-app-frontend/.DS_Store
-budgeting-app-frontend/.env.local
-budgeting-app-frontend/.env.development.local
-budgeting-app-frontend/.env.test.local
-budgeting-app-frontend/.env.production.local
+# Testing
+coverage/
 
-budgeting-app-frontend/npm-debug.log*
-budgeting-app-frontend/yarn-debug.log*
-budgeting-app-frontend/yarn-error.log*
+# IDE-specific files
+# Visual Studio Code
+.vscode/
