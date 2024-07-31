@@ -1,23 +1,23 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+budgeting-app-frontend/node_modules
+budgeting-app-frontend/.pnp
+budgeting-app-frontend/.pnp.js
 
 # testing
-/coverage
+budgeting-app-frontend/coverage
 
 # production
-/build
+budgeting-app-frontend/build
 
 # misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+budgeting-app-frontend/.DS_Store
+budgeting-app-frontend/.env.local
+budgeting-app-frontend/.env.development.local
+budgeting-app-frontend/.env.test.local
+budgeting-app-frontend/.env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+budgeting-app-frontend/npm-debug.log*
+budgeting-app-frontend/yarn-debug.log*
+budgeting-app-frontend/yarn-error.log*
