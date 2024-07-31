@@ -1,0 +1,54 @@
+# Operating system generated
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea
+*.iml
+*.suo
+*.cache
+*.localhistory
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.a
+*.elf
+*.exe
+*.dll
+*.pyc
+*.pyo
+*.pyd
+*.rbc
+*.rbw
+*.cpython-*.pyc
+*.cpython-*.pyo
+*.cpython-*.pyd
+*.cpython-*.so
+__pycache__/
+*.egg-info
+*.egg
+.eggs
+
+# Distribution archives
+*.tar.gz
+*.zip
+
+# Go build artifacts
+/bin/
+/build/
+/pkg/
+/dist/
+
+# Go workspace and cache
+/go/
+go.sum
+
+# Test and coverage
+/test/
+/coverage/
+
+# IDE-specific files
+# Visual Studio Code
+.vscode/
