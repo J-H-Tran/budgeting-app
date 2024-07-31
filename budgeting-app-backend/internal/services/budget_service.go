@@ -9,49 +9,43 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// @Summary Create a new budget
-// @Description Create a new budget with the input payload
-// @Tags budgets
-// @Accept  json
-// @Produce  json
-// @Param budget body models.Budget true "Budget"
-// @Success 201 {object} models.Budget
-// @Failure 400 {object} gin.H{"error": "Bad Request"}
-// @Failure 500 {object} gin.H{"error": "Internal Server Error"}
-// @Router /budgets [post]
+// @Summary Create a new budget item
+// @Description Create a new budget item in the database
+// @Tags Budget Items
+// @Accept json
+// @Produce json
+// @Param item body models.BudgetItem true "Budget Item"
+// @Success 201 {object} models.BudgetItem
+// @Router /api/budget-items [post]
 func CreateBudgetItem(w http.ResponseWriter, r *http.Request) {
 	var item models.BudgetItem
 	json.NewDecoder(r.Body).Decode(&item)
 	config.DB.Create(&item)
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(item)
 }
 
-// @Summary Get all budgets
-// @Description Get a list of all budgets
-// @Tags budgets
-// @Accept  json
-// @Produce  json
-// @Success 200 {array} models.Budget
-// @Failure 400 {object} gin.H{"error": "Bad Request"}
-// @Failure 500 {object} gin.H{"error": "Internal Server Error"}
-// @Router /budgets [get]
+// @Summary Get all budget items
+// @Description Retrieve all budget items from the database
+// @Tags Budget Items
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.BudgetItem
+// @Router /api/budget-items [get]
 func GetBudgetItems(w http.ResponseWriter, r *http.Request) {
 	var items []models.BudgetItem
 	config.DB.Find(&items)
 	json.NewEncoder(w).Encode(items)
 }
 
-// @Summary Get a budget by ID
-// @Description Get a budget by its ID
-// @Tags budgets
-// @Accept  json
-// @Produce  json
-// @Param id path int true "Budget ID"
-// @Success 200 {object} models.Budget
-// @Failure 400 {object} gin.H{"error": "Bad Request"}
-// @Failure 404 {object} gin.H{"error": "Not Found"}
-// @Failure 500 {object} gin.H{"error": "Internal Server Error"}
-// @Router /budgets/{id} [get]
+// @Summary Get a specific budget item
+// @Description Retrieve a specific budget item by ID
+// @Tags Budget Items
+// @Accept json
+// @Produce json
+// @Param id path int true "Budget Item ID"
+// @Success 200 {object} models.BudgetItem
+// @Router /api/budget-items/{id} [get]
 func GetBudgetItem(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var item models.BudgetItem
@@ -59,18 +53,15 @@ func GetBudgetItem(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(item)
 }
 
-// @Summary Update a budget by ID
-// @Description Update a budget by its ID with the input payload
-// @Tags budgets
-// @Accept  json
-// @Produce  json
-// @Param id path int true "Budget ID"
-// @Param budget body models.Budget true "Budget"
-// @Success 200 {object} models.Budget
-// @Failure 400 {object} gin.H{"error": "Bad Request"}
-// @Failure 404 {object} gin.H{"error": "Not Found"}
-// @Failure 500 {object} gin.H{"error": "Internal Server Error"}
-// @Router /budgets/{id} [put]
+// @Summary Update a budget item
+// @Description Update a budget item in the database
+// @Tags Budget Items
+// @Accept json
+// @Produce json
+// @Param id path int true "Budget Item ID"
+// @Param item body models.BudgetItem true "Budget Item"
+// @Success 200 {object} models.BudgetItem
+// @Router /api/budget-items/{id} [put]
 func UpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var item models.BudgetItem
@@ -80,17 +71,14 @@ func UpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(item)
 }
 
-// @Summary Delete a budget by ID
-// @Description Delete a budget by its ID
-// @Tags budgets
-// @Accept  json
-// @Produce  json
-// @Param id path int true "Budget ID"
-// @Success 204 {object} nil
-// @Failure 400 {object} gin.H{"error": "Bad Request"}
-// @Failure 404 {object} gin.H{"error": "Not Found"}
-// @Failure 500 {object} gin.H{"error": "Internal Server Error"}
-// @Router /budgets/{id} [delete]
+// @Summary Delete a budget item
+// @Description Delete a budget item from the database
+// @Tags Budget Items
+// @Accept json
+// @Produce json
+// @Param id path int true "Budget Item ID"
+// @Success 200 {string} string "Item deleted"
+// @Router /api/budget-items/{id} [delete]
 func DeleteBudgetItem(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var item models.BudgetItem
