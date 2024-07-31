@@ -13,11 +13,11 @@ import (
 // @Tags Budget Items
 // @Accept json
 // @Produce json
-// @Param item body models.BudgetItem true "Budget Item"
-// @Success 201 {object} models.BudgetItem
+// @Param item body models.BudgetItemDTO true "Budget Item"
+// @Success 201 {object} models.BudgetItemDTO
 // @Router /api/budget-items [post]
 func CreateBudgetItem(c *gin.Context) {
-	var item models.BudgetItem
+	var item models.BudgetItemDTO
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -31,10 +31,10 @@ func CreateBudgetItem(c *gin.Context) {
 // @Tags Budget Items
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.BudgetItem
+// @Success 200 {array} models.BudgetItemDTO
 // @Router /api/budget-items [get]
 func GetBudgetItems(c *gin.Context) {
-	var items []models.BudgetItem
+	var items []models.BudgetItemDTO
 	config.DB.Find(&items)
 	c.JSON(http.StatusOK, items)
 }
@@ -45,11 +45,11 @@ func GetBudgetItems(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Budget Item ID"
-// @Success 200 {object} models.BudgetItem
+// @Success 200 {object} models.BudgetItemDTO
 // @Router /api/budget-items/{id} [get]
 func GetBudgetItem(c *gin.Context) {
 	id := c.Param("id")
-	var item models.BudgetItem
+	var item models.BudgetItemDTO
 	if result := config.DB.First(&item, id); result.Error != nil {
 		c.JSON(http.StatusNotFound, result.Error.Error())
 		return
@@ -63,12 +63,12 @@ func GetBudgetItem(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Budget Item ID"
-// @Param item body models.BudgetItem true "Budget Item"
-// @Success 200 {object} models.BudgetItem
+// @Param item body models.BudgetItemDTO true "Budget Item"
+// @Success 200 {object} models.BudgetItemDTO
 // @Router /api/budget-items/{id} [put]
 func UpdateBudgetItem(c *gin.Context) {
 	id := c.Param("id")
-	var item models.BudgetItem
+	var item models.BudgetItemDTO
 	if result := config.DB.First(&item, id); result.Error != nil {
 		c.JSON(http.StatusNotFound, result.Error.Error())
 		return
@@ -91,7 +91,7 @@ func UpdateBudgetItem(c *gin.Context) {
 // @Router /api/budget-items/{id} [delete]
 func DeleteBudgetItem(c *gin.Context) {
 	id := c.Param("id")
-	var item models.BudgetItem
+	var item models.BudgetItemDTO
 	if result := config.DB.Delete(&item, id); result.Error != nil {
 		c.JSON(http.StatusNotFound, result.Error.Error())
 		return
