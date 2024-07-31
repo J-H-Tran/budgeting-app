@@ -2,13 +2,17 @@ package routes
 
 import (
 	"github.com/J-H-Tran/budgeting-app-backend/internal/services"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func BudgetRoutes(r *mux.Router) {
-	r.HandleFunc("/api/budget-items", services.CreateBudgetItem).Methods("POST")
-	r.HandleFunc("/api/budget-items", services.GetBudgetItems).Methods("GET")
-	r.HandleFunc("/api/budget-items/{id}", services.GetBudgetItem).Methods("GET")
-	r.HandleFunc("/api/budget-items/{id}", services.UpdateBudgetItem).Methods("PUT")
-	r.HandleFunc("/api/budget-items/{id}", services.DeleteBudgetItem).Methods("DELETE")
+func BudgetRoutes(r *gin.Engine) {
+	// Grouping routes under /api/budget-items
+	budgetRoutes := r.Group("/api/budget-items")
+	{
+		budgetRoutes.POST("", services.CreateBudgetItem)
+		budgetRoutes.GET("", services.GetBudgetItems)
+		budgetRoutes.GET("/:id", services.GetBudgetItem)
+		budgetRoutes.PUT("/:id", services.UpdateBudgetItem)
+		budgetRoutes.DELETE("/:id", services.DeleteBudgetItem)
+	}
 }

@@ -1,12 +1,11 @@
 package services
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/J-H-Tran/budgeting-app-backend/config"
 	"github.com/J-H-Tran/budgeting-app-backend/internal/models"
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 // @Summary Create a new budget item
@@ -17,12 +16,14 @@ import (
 // @Param item body models.BudgetItem true "Budget Item"
 // @Success 201 {object} models.BudgetItem
 // @Router /api/budget-items [post]
-func CreateBudgetItem(w http.ResponseWriter, r *http.Request) {
+func CreateBudgetItem(c *gin.Context) {
 	var item models.BudgetItem
-	json.NewDecoder(r.Body).Decode(&item)
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	config.DB.Create(&item)
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(item)
+	c.JSON(http.StatusCreated, item)
 }
 
 // @Summary Get all budget items
@@ -32,10 +33,10 @@ func CreateBudgetItem(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {array} models.BudgetItem
 // @Router /api/budget-items [get]
-func GetBudgetItems(w http.ResponseWriter, r *http.Request) {
+func GetBudgetItems(c *gin.Context) {
 	var items []models.BudgetItem
 	config.DB.Find(&items)
-	json.NewEncoder(w).Encode(items)
+	c.JSON(http.StatusOK, items)
 }
 
 // @Summary Get a specific budget item
@@ -46,11 +47,14 @@ func GetBudgetItems(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Budget Item ID"
 // @Success 200 {object} models.BudgetItem
 // @Router /api/budget-items/{id} [get]
-func GetBudgetItem(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+func GetBudgetItem(c *gin.Context) {
+	id := c.Param("id")
 	var item models.BudgetItem
-	config.DB.First(&item, params["id"])
-	json.NewEncoder(w).Encode(item)
+	if result := config.DB.First(&item, id); result.Error != nil {
+		c.JSON(http.StatusNotFound, result.Error.Error())
+		return
+	}
+	c.JSON(http.StatusOK, item)
 }
 
 // @Summary Update a budget item
@@ -62,13 +66,19 @@ func GetBudgetItem(w http.ResponseWriter, r *http.Request) {
 // @Param item body models.BudgetItem true "Budget Item"
 // @Success 200 {object} models.BudgetItem
 // @Router /api/budget-items/{id} [put]
-func UpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+func UpdateBudgetItem(c *gin.Context) {
+	id := c.Param("id")
 	var item models.BudgetItem
-	config.DB.First(&item, params["id"])
-	json.NewDecoder(r.Body).Decode(&item)
+	if result := config.DB.First(&item, id); result.Error != nil {
+		c.JSON(http.StatusNotFound, result.Error.Error())
+		return
+	}
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	config.DB.Save(&item)
-	json.NewEncoder(w).Encode(item)
+	c.JSON(http.StatusOK, item)
 }
 
 // @Summary Delete a budget item
@@ -79,9 +89,12 @@ func UpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Budget Item ID"
 // @Success 200 {string} string "Item deleted"
 // @Router /api/budget-items/{id} [delete]
-func DeleteBudgetItem(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+func DeleteBudgetItem(c *gin.Context) {
+	id := c.Param("id")
 	var item models.BudgetItem
-	config.DB.Delete(&item, params["id"])
-	json.NewEncoder(w).Encode("Item deleted")
+	if result := config.DB.Delete(&item, id); result.Error != nil {
+		c.JSON(http.StatusNotFound, result.Error.Error())
+		return
+	}
+	c.JSON(http.StatusOK, "Item deleted")
 }
