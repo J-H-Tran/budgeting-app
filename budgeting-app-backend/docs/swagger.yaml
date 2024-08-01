@@ -21,9 +21,6 @@ definitions:
           Currency is the currency of the bank account balance
           @Description Currency is the currency of the bank account balance
         type: string
-      deleted_at:
-        example: "2006-01-02T15:04:05Z"
-        type: string
       id:
         type: integer
       name:
@@ -45,7 +42,10 @@ definitions:
         type: number
       created_at:
         type: string
-      deleted_at:
+      description:
+        description: |-
+          Description is the description of the budget item
+          @Description Description is the description of the budget item
         type: string
       id:
         type: integer
@@ -55,6 +55,49 @@ definitions:
           @Description Name is the name of the budget item
         type: string
       updated_at:
+        type: string
+    type: object
+  models.Transaction:
+    properties:
+      account_id:
+        description: |-
+          The ID of the account associated with the transaction
+          required: true
+        type: integer
+      amount:
+        description: |-
+          The amount of the transaction
+          required: true
+        type: number
+      category:
+        description: |-
+          The category of the transaction
+          required: true
+        type: string
+      created_at:
+        description: |-
+          The time the transaction was created
+          required: true
+        type: string
+      date:
+        description: |-
+          The date of the transaction
+          required: true
+        type: string
+      id:
+        description: |-
+          The ID of the transaction
+          required: true
+        type: integer
+      note:
+        description: |-
+          Additional notes about the transaction
+          required: false
+        type: string
+      updated_at:
+        description: |-
+          The time the transaction was last updated
+          required: true
         type: string
     type: object
 host: localhost:8080
@@ -359,4 +402,137 @@ paths:
       summary: Update an existing budget
       tags:
       - budget_items
+  /transactions:
+    get:
+      description: Get all transactions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Transaction'
+            type: array
+      summary: Get all transactions
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction
+      parameters:
+      - description: Transaction
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /transactions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a transaction
+      tags:
+      - transactions
+    get:
+      description: Get a transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a transaction by ID
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Update an existing transaction
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/models.Transaction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing transaction
+      tags:
+      - transactions
 swagger: "2.0"
