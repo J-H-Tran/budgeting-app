@@ -1,0 +1,362 @@
+basePath: /api
+definitions:
+  models.Account:
+    description: Account represents a bank account
+    properties:
+      account_number:
+        description: |-
+          AccountNumber is the unique number of the bank account
+          @Description AccountNumber is the unique number of the bank account
+        type: string
+      balance:
+        description: |-
+          Balance is the current balance of the bank account
+          @Description Balance is the current balance of the bank account
+        type: number
+      created_at:
+        example: "2006-01-02T15:04:05Z"
+        type: string
+      currency:
+        description: |-
+          Currency is the currency of the bank account balance
+          @Description Currency is the currency of the bank account balance
+        type: string
+      deleted_at:
+        example: "2006-01-02T15:04:05Z"
+        type: string
+      id:
+        type: integer
+      name:
+        description: |-
+          Name is the name of the bank account type (e.g., Checkings, Savings)
+          @Description Name is the name of the bank account type
+        type: string
+      updated_at:
+        example: "2006-01-02T15:04:05Z"
+        type: string
+    type: object
+  models.BudgetItem:
+    description: BudgetItem represents a budget item
+    properties:
+      amount:
+        description: |-
+          Amount is the amount allocated for the budget item
+          @Description Amount is the amount allocated for the budget item
+        type: number
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      name:
+        description: |-
+          Name is the name of the budget item
+          @Description Name is the name of the budget item
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample API for a budgeting application.
+  termsOfService: http://swagger.io/terms/
+  title: Budgeting API
+  version: "1.0"
+paths:
+  /accounts:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all accounts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Account'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all accounts
+      tags:
+      - accounts
+    post:
+      consumes:
+      - application/json
+      description: Create a new account with the input payload
+      parameters:
+      - description: Account
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/models.Account'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Account'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new account
+      tags:
+      - accounts
+  /accounts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an account by ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete an account
+      tags:
+      - accounts
+    get:
+      consumes:
+      - application/json
+      description: Get an account by its ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Account'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve an account by ID
+      tags:
+      - accounts
+    put:
+      consumes:
+      - application/json
+      description: Update an existing account with the input payload
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Account
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/models.Account'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Account'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update an existing account
+      tags:
+      - accounts
+  /budget_items/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a budget item by its ID
+      parameters:
+      - description: Budget Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BudgetItem'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve a single budget item
+      tags:
+      - budget_items
+  /budgets:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all budgets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.BudgetItem'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all budgets
+      tags:
+      - budget_items
+    post:
+      consumes:
+      - application/json
+      description: Create a new budget with the input payload
+      parameters:
+      - description: Budget
+        in: body
+        name: budget
+        required: true
+        schema:
+          $ref: '#/definitions/models.BudgetItem'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.BudgetItem'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new budget
+      tags:
+      - budget_items
+  /budgets/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a budget by ID
+      parameters:
+      - description: Budget ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a budget
+      tags:
+      - budget_items
+    put:
+      consumes:
+      - application/json
+      description: Update an existing budget with the input payload
+      parameters:
+      - description: Budget ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Budget
+        in: body
+        name: budget
+        required: true
+        schema:
+          $ref: '#/definitions/models.BudgetItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.BudgetItem'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update an existing budget
+      tags:
+      - budget_items
+swagger: "2.0"
