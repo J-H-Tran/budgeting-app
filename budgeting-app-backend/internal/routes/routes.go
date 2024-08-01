@@ -20,4 +20,12 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/budget-items", services.CreateBudgetItem).Methods("POST")
 	r.HandleFunc("/api/budget-items/{id}", services.UpdateBudgetItem).Methods("PUT")
 	r.HandleFunc("/api/budget-items/{id}", services.DeleteBudgetItem).Methods("DELETE")
+
+	// Transaction routes
+	r.HandleFunc("/api/transactions", services.CreateTransaction).Methods("POST")
+	r.HandleFunc("/api/transactions", services.GetTransactions).Methods("GET")
+	r.HandleFunc("/api/transactions/{id}", services.GetTransaction).Methods("GET")
+	r.HandleFunc("/api/transactions/{id}", services.UpdateTransaction).Methods("PUT")
+	r.HandleFunc("/api/transactions/{id}", services.DeleteTransaction).Methods("DELETE")
+
 }

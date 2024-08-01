@@ -18,7 +18,7 @@ func ConnectDB() {
 	}
 
 	// AutoMigrate the models
-	err = DB.AutoMigrate(&models.BudgetItem{}, &models.Account{})
+	err = DB.AutoMigrate(&models.BudgetItem{}, &models.Account{}, &models.Transaction{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
