@@ -1,15 +1,19 @@
 // internal/models/account.go
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Account represents a bank account
 // @Description Account represents a bank account
 type Account struct {
-	ID        uint       `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time  `json:"created_at" example:"2006-01-02T15:04:05Z"`
-	UpdatedAt time.Time  `json:"updated_at" example:"2006-01-02T15:04:05Z"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty" sql:"index" example:"2006-01-02T15:04:05Z"`
+	ID        uint           `gorm:"primaryKey" json:"id"`
+	CreatedAt time.Time      `json:"created_at" example:"2006-01-02T15:04:05Z"`
+	UpdatedAt time.Time      `json:"updated_at" example:"2006-01-02T15:04:05Z"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-" sql:"index" example:"2006-01-02T15:04:05Z"`
 	// Name is the name of the bank account type (e.g., Checkings, Savings)
 	// @Description Name is the name of the bank account type
 	Name string `json:"name"`
