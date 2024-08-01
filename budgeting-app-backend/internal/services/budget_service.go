@@ -1,100 +1,143 @@
+// internal/services/budget_service.go
 package services
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/J-H-Tran/budgeting-app-backend/config"
 	"github.com/J-H-Tran/budgeting-app-backend/internal/models"
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 )
 
-// @Summary Create a new budget item
-// @Description Create a new budget item in the database
-// @Tags Budget Items
-// @Accept json
-// @Produce json
-// @Param item body models.BudgetItemDTO true "Budget Item"
-// @Success 201 {object} models.BudgetItemDTO
-// @Router /api/budget-items [post]
-func CreateBudgetItem(c *gin.Context) {
-	var item models.BudgetItemDTO
-	if err := c.ShouldBindJSON(&item); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+// GetBudgetItem retrieves a single budget by ID
+// @Summary Retrieve a single budget item
+// @Description Get a budget item by its ID
+// @Tags budget_items
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Budget Item ID"
+// @Success 200 {object} models.BudgetItem
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /budget_items/{id} [get]
+func GetBudgetItem(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var budget models.BudgetItem
+	if err := config.DB.First(&budget, params["id"]).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	config.DB.Create(&item)
-	c.JSON(http.StatusCreated, item)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(budget)
 }
 
-// @Summary Get all budget items
-// @Description Retrieve all budget items from the database
-// @Tags Budget Items
-// @Accept json
-// @Produce json
-// @Success 200 {array} models.BudgetItemDTO
-// @Router /api/budget-items [get]
-func GetBudgetItems(c *gin.Context) {
-	var items []models.BudgetItemDTO
-	config.DB.Find(&items)
-	c.JSON(http.StatusOK, items)
+// GetBudgets retrieves all budgets
+// @Summary Retrieve all budgets
+// @Description Get a list of all budgets
+// @Tags budget_items
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.BudgetItem
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /budgets [get]
+func GetBudgetItems(w http.ResponseWriter, r *http.Request) {
+	var budgets []models.BudgetItem
+	if err := config.DB.Find(&budgets).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(budgets)
 }
 
-// @Summary Get a specific budget item
-// @Description Retrieve a specific budget item by ID
-// @Tags Budget Items
-// @Accept json
-// @Produce json
-// @Param id path int true "Budget Item ID"
-// @Success 200 {object} models.BudgetItemDTO
-// @Router /api/budget-items/{id} [get]
-func GetBudgetItem(c *gin.Context) {
-	id := c.Param("id")
-	var item models.BudgetItemDTO
-	if result := config.DB.First(&item, id); result.Error != nil {
-		c.JSON(http.StatusNotFound, result.Error.Error())
+// CreateBudget creates a new budget
+// @Summary Create a new budget
+// @Description Create a new budget with the input payload
+// @Tags budget_items
+// @Accept  json
+// @Produce  json
+// @Param budget body models.BudgetItem true "Budget"
+// @Success 201 {object} models.BudgetItem
+// @Failure 400 {string} string "Bad Request"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /budgets [post]
+func CreateBudgetItem(w http.ResponseWriter, r *http.Request) {
+	var budget models.BudgetItem
+	if err := json.NewDecoder(r.Body).Decode(&budget); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	c.JSON(http.StatusOK, item)
+
+	if err := config.DB.Create(&budget).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(budget)
 }
 
-// @Summary Update a budget item
-// @Description Update a budget item in the database
-// @Tags Budget Items
-// @Accept json
-// @Produce json
-// @Param id path int true "Budget Item ID"
-// @Param item body models.BudgetItemDTO true "Budget Item"
-// @Success 200 {object} models.BudgetItemDTO
-// @Router /api/budget-items/{id} [put]
-func UpdateBudgetItem(c *gin.Context) {
-	id := c.Param("id")
-	var item models.BudgetItemDTO
-	if result := config.DB.First(&item, id); result.Error != nil {
-		c.JSON(http.StatusNotFound, result.Error.Error())
+// UpdateBudget updates an existing budget by ID
+// @Summary Update an existing budget
+// @Description Update an existing budget with the input payload
+// @Tags budget_items
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Budget ID"
+// @Param budget body models.BudgetItem true "Budget"
+// @Success 200 {object} models.BudgetItem
+// @Failure 400 {string} string "Bad Request"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /budgets/{id} [put]
+func UpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var budget models.BudgetItem
+	if err := config.DB.First(&budget, params["id"]).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	if err := c.ShouldBindJSON(&item); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+
+	if err := json.NewDecoder(r.Body).Decode(&budget); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	config.DB.Save(&item)
-	c.JSON(http.StatusOK, item)
+
+	if err := config.DB.Save(&budget).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(budget)
 }
 
-// @Summary Delete a budget item
-// @Description Delete a budget item from the database
-// @Tags Budget Items
-// @Accept json
-// @Produce json
-// @Param id path int true "Budget Item ID"
-// @Success 200 {string} string "Item deleted"
-// @Router /api/budget-items/{id} [delete]
-func DeleteBudgetItem(c *gin.Context) {
-	id := c.Param("id")
-	var item models.BudgetItemDTO
-	if result := config.DB.Delete(&item, id); result.Error != nil {
-		c.JSON(http.StatusNotFound, result.Error.Error())
+// DeleteBudget deletes a budget by ID
+// @Summary Delete a budget
+// @Description Delete a budget by ID
+// @Tags budget_items
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Budget ID"
+// @Success 204 {string} string "No Content"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /budgets/{id} [delete]
+func DeleteBudgetItem(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var budget models.BudgetItem
+	if err := config.DB.First(&budget, params["id"]).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	c.JSON(http.StatusOK, "Item deleted")
+
+	if err := config.DB.Delete(&budget).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

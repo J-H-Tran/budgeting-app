@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/J-H-Tran/budgeting-app-backend/config"
 	_ "github.com/J-H-Tran/budgeting-app-backend/docs" // Swagger docs
 	"github.com/J-H-Tran/budgeting-app-backend/internal/routes"
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger" // Swagger UI
 )
 
@@ -23,18 +24,13 @@ import (
 // @BasePath /api
 func main() {
 	config.ConnectDB()
-
-	r := gin.Default()
+	r := mux.NewRouter()
 
 	// Swagger UI route
-	r.GET("/swagger/*any", gin.WrapH(httpSwagger.WrapHandler))
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	// Register routes
-	routes.BudgetRoutes(r)
+	routes.RegisterRoutes(r)
 
-	r.GET("/", func(c *gin.Context) {
-		c.String(200, "Welcome to the Budgeting App Backend")
-	})
-
-	log.Fatal(r.Run(":8080"))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
