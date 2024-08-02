@@ -46,7 +46,6 @@ __pycache__/
 go.sum
 
 # Test and coverage
-/test/
 /coverage/
 
 # IDE-specific files
